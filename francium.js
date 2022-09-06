@@ -8,6 +8,7 @@ const puppeteer = require('puppeteer');
     await page.waitForNetworkIdle();
     await page.waitForSelector('td.ant-table-cell>div>p');
 
+    console.log('Executing Francium scrape...')
     const millions = 1000000;
     const francium_usdc_supply_apy = await page.evaluate(() => parseFloat(document.querySelectorAll('p.hint')[0].textContent.replace('%' , '')));
     const francium_usdc_supply = await page.evaluate(() => parseFloat(document.querySelectorAll('td.ant-table-cell>div>p')[2].textContent.substring(1).replace('M' , ''))) * millions;
@@ -69,7 +70,35 @@ const puppeteer = require('puppeteer');
     console.log(francium_usdc);
     console.log(francium_usdt);
 
+    while (francium_sol_supply === 0) {
+        try {
+            let x = 1
+            console.log('Retrying Francium data scrape ' + 'Attempt' + ` ${x}`)
+            francium_sol_supply;
+            francium_sol_borrow;
+            francium_sol_supply_apy;
+            francium_sol_utilization;
+            francium_usdc_supply;
+            francium_usdc_borrow;
+            francium_usdc_supply_apy;
+            francium_usdc_utilization;
+            francium_usdt_supply;
+            francium_usdt_borrow;
+            francium_usdt_supply_apy;
+            francium_usdt_utilization;
+            x++;
+        
+        } catch {
+            console.log('Francium data scrape success!')
+            console.log(francium_sol);
+            console.log(francium_usdc);
+            console.log(francium_usdt);
+            // insert code to push to arr > db
+            break;
+        }
+    }
 
+    console.log('Finished Francium scraping!')
     await browser.close()
 
 }());

@@ -9,6 +9,7 @@ const puppeteer = require('puppeteer');
 
     // usually xhr requests occur shortly after, this works compared to waiting for a selector.
     await page.waitForNetworkIdle()
+    console.log('Executing Solend scrape...')
 
     // data populates both name and price combined, substring removes the name and grabs the price without '$', trim removes the space at the end
     // all of this is converted into an integer
@@ -89,8 +90,37 @@ const puppeteer = require('puppeteer');
     console.log(solend_usdc);
     console.log(solend_usdt);
 
-    solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
+    while (solend_sol_price === 0) {
+        try {
+            let x = 1
+            console.log('Retrying Solend data scrape ' + 'Attempt' + ` ${x}`)
+            solend_sol_supply;
+            solend_sol_borrow;
+            solend_sol_supply_apy;
+            // could manually add this later
+            // solend_sol_utilization;
+            solend_usdc_supply;
+            solend_usdc_borrow;
+            solend_usdc_supply_apy;
+            // solend_usdc_utilization;
+            solend_usdt_supply;
+            solend_usdt_borrow;
+            solend_usdt_supply_apy;
+            // francium_usdt_utilization;
+            x++;
+        
+        } catch {
+            console.log('Solend data scrape success!')
+            console.log(solend_sol);
+            console.log(solend_usdc);
+            console.log(solend_usdt);
+            // insert code to push to arr > db
+            break;
+        }
+    }
 
+    // solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
+    console.log('Finished Solend scraping!')
     await browser.close()
 
 }());

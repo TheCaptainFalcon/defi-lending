@@ -15,9 +15,11 @@ const puppeteer = require('puppeteer');
     // await page.waitForNetworkIdle();
     await page.waitForSelector('div.lend-table__row-item__cell-usd')
 
+    console.log('Executing Tulip scrape...')
     // in order to account for edgecase, replacing built in substring method to an alternative.
     // using subtring 1 will eliminate the $ but can account for increasing digit counts
     // adding m in zeros to keep data consistent
+
     const millions = 1000000;
     const tulip_usdc_supply_apy = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell')[2].textContent.replace('%' , '')));
 
@@ -88,6 +90,36 @@ const puppeteer = require('puppeteer');
     console.log(tulip_usdc)
     console.log(tulip_usdt)
 
+    // if my calculations are correct, when this triggers, the correct data will populate the instance that should have been without duplicating instances
+    while (tulip_sol_supply === 0) {
+        try {
+            let x = 1
+            console.log('Retrying Tulip data scrape ' + 'Attempt' + ` ${x}`)
+            tulip_sol_supply;
+            tulip_sol_borrow;
+            tulip_sol_supply_apy;
+            tulip_sol_utilization;
+            tulip_usdc_supply;
+            tulip_usdc_borrow;
+            tulip_usdc_supply_apy;
+            tulip_usdc_utilization;
+            tulip_usdt_supply;
+            tulip_usdt_borrow;
+            tulip_usdt_supply_apy;
+            tulip_usdt_utilization;
+            x++;
+        
+        } catch {
+            console.log('tulip data scrape success!')
+            console.log(tulip_sol);
+            console.log(tulip_usdc);
+            console.log(tulip_usdt);
+            // insert code to push to arr > db
+            break;
+
+    }
+}
+    console.log('Finished Tulip scrape!')
     await browser.close();
 
 }());
