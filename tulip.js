@@ -114,11 +114,15 @@ const puppeteer = require('puppeteer');
             tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
             console.log(tulip_data_bank)
             console.log('tulip data scrape success!')
+        }
+    } else {
+        tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
+        console.log(tulip_data_bank)
+        console.log('Finished Tulip scrape!')
     }
-}
-    tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
-    console.log(tulip_data_bank)
-    console.log('Finished Tulip scrape!')
+    // tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
+    // console.log(tulip_data_bank)
+    // console.log('Finished Tulip scrape!')
     await browser.close();
 
 }());

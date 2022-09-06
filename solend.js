@@ -115,12 +115,16 @@ const puppeteer = require('puppeteer');
             console.log(solend_data_bank);
             console.log('Solend data scrape success!')
         }
+    } else {
+        solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
+        console.log(solend_data_bank)
+        console.log('Finished Solend scraping!')
     }
 
-    solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
-    console.log(solend_data_bank)
+    // solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
+    // console.log(solend_data_bank)
 
-    console.log('Finished Solend scraping!')
+    // console.log('Finished Solend scraping!')
     await browser.close()
 
 }());

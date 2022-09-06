@@ -95,11 +95,15 @@ const puppeteer = require('puppeteer');
             console.log(francium_data_bank)
             console.log('Francium data scrape success!')
         }
+    } else {
+        francium_data_bank.push(francium_sol, francium_usdc, francium_usdt)
+        console.log(francium_data_bank)
+        console.log('Finished Francium scraping!')
     }
 
-    francium_data_bank.push(francium_sol, francium_usdc, francium_usdt)
-    console.log(francium_data_bank)
-    console.log('Finished Francium scraping!')
+    // francium_data_bank.push(francium_sol, francium_usdc, francium_usdt)
+    // console.log(francium_data_bank)
+    // console.log('Finished Francium scraping!')
     await browser.close()
 
 }());
