@@ -3,21 +3,23 @@ require('dotenv').config({ path:'./secret.env' });
 
 // temporary boiler plate for starter code
 
-let mysql = require('mysql');
+//msql2 is faster and more secure than 1
+const mysql = require('mysql2');
 
-let con = mysql.createConnection({
+const connection = mysql.createConnection({
     host: process.env.host,
     user: process.env.user,
     password: process.env.password,
     database: process.env.database
 });
 
-con.connect(err => {
+connection.connect(err => {
     if (err) throw err;
-    console.log(`Database ${database} connected.`)
-    let sql = "INSERT INTO customers (name, address) VALUES ('company inc', 'highway 37')";
-    con.query(sql, (err, res) => {
+    console.log('Database ' + `${process.env.database}` + ' connected.')
+    let sql = "INSERT INTO test1 (name) VALUES ('test2')";
+    connection.query(sql, (err, res) => {
         if (err) throw err;
-        console.log('1 record inserted')
+        // fix this later as its hard coded
+        console.log('1 record inserted') 
     });
 });
