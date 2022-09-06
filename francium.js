@@ -66,14 +66,16 @@ const puppeteer = require('puppeteer');
         day_of_week : dow
     }
 
-    console.log(francium_sol);
-    console.log(francium_usdc);
-    console.log(francium_usdt);
+    // console.log(francium_sol);
+    // console.log(francium_usdc);
+    // console.log(francium_usdt);
 
-    while (francium_sol_supply === 0) {
+    let francium_data_bank = [];
+
+    if (francium_sol_supply === 0) {
         try {
-            let x = 1
-            console.log('Retrying Francium data scrape ' + 'Attempt' + ` ${x}`)
+            setTimeout(3000);
+            console.log('Retrying Francium data scrape')
             francium_sol_supply;
             francium_sol_borrow;
             francium_sol_supply_apy;
@@ -86,18 +88,17 @@ const puppeteer = require('puppeteer');
             francium_usdt_borrow;
             francium_usdt_supply_apy;
             francium_usdt_utilization;
-            x++;
         
         } catch {
-            console.log('Francium data scrape success!')
-            console.log(francium_sol);
-            console.log(francium_usdc);
-            console.log(francium_usdt);
             // insert code to push to arr > db
-            break;
+            francium_data_bank.push(francium_sol, francium_usdc, francium_usdt)
+            console.log(francium_data_bank)
+            console.log('Francium data scrape success!')
         }
     }
 
+    francium_data_bank.push(francium_sol, francium_usdc, francium_usdt)
+    console.log(francium_data_bank)
     console.log('Finished Francium scraping!')
     await browser.close()
 

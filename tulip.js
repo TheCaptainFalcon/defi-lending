@@ -86,15 +86,16 @@ const puppeteer = require('puppeteer');
     }
 
 
-    console.log(tulip_sol)
-    console.log(tulip_usdc)
-    console.log(tulip_usdt)
+    // console.log(tulip_sol)
+    // console.log(tulip_usdc)
+    // console.log(tulip_usdt)
 
+    let tulip_data_bank = [];
     // if my calculations are correct, when this triggers, the correct data will populate the instance that should have been without duplicating instances
-    while (tulip_sol_supply === 0) {
+    if (tulip_sol_supply === 0) {
         try {
-            let x = 1
-            console.log('Retrying Tulip data scrape ' + 'Attempt' + ` ${x}`)
+            setTimeout(3000);
+            console.log('Retrying Tulip data scrape')
             tulip_sol_supply;
             tulip_sol_borrow;
             tulip_sol_supply_apy;
@@ -107,18 +108,16 @@ const puppeteer = require('puppeteer');
             tulip_usdt_borrow;
             tulip_usdt_supply_apy;
             tulip_usdt_utilization;
-            x++;
         
         } catch {
-            console.log('tulip data scrape success!')
-            console.log(tulip_sol);
-            console.log(tulip_usdc);
-            console.log(tulip_usdt);
             // insert code to push to arr > db
-            break;
-
+            tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
+            console.log(tulip_data_bank)
+            console.log('tulip data scrape success!')
     }
 }
+    tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
+    console.log(tulip_data_bank)
     console.log('Finished Tulip scrape!')
     await browser.close();
 

@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
 
 (async function solend_scrape() {
-    let solend_data_bank = [];
     const browser =  await puppeteer.launch({ headless: true, defaultViewport: null })
     const page = (await browser.pages())[0]
     await page.setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36");
@@ -86,14 +85,16 @@ const puppeteer = require('puppeteer');
         day_of_week : dow
     }
 
-    console.log(solend_sol);
-    console.log(solend_usdc);
-    console.log(solend_usdt);
+    // console.log(solend_sol);
+    // console.log(solend_usdc);
+    // console.log(solend_usdt);
 
-    while (solend_sol_price === 0) {
+    let solend_data_bank = [];
+
+    if (solend_sol_supply === 0) {
         try {
-            let x = 1
-            console.log('Retrying Solend data scrape ' + 'Attempt' + ` ${x}`)
+            setTimeout(3000);
+            console.log('Retrying Solend data scrape')
             solend_sol_supply;
             solend_sol_borrow;
             solend_sol_supply_apy;
@@ -107,23 +108,24 @@ const puppeteer = require('puppeteer');
             solend_usdt_borrow;
             solend_usdt_supply_apy;
             // francium_usdt_utilization;
-            x++;
         
         } catch {
-            console.log('Solend data scrape success!')
-            console.log(solend_sol);
-            console.log(solend_usdc);
-            console.log(solend_usdt);
             // insert code to push to arr > db
-            break;
+            solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
+            console.log(solend_data_bank);
+            console.log('Solend data scrape success!')
         }
     }
 
-    // solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
+    solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
+    console.log(solend_data_bank)
+
     console.log('Finished Solend scraping!')
     await browser.close()
 
 }());
 
-module.exports = { 'solend_scrape' : this.solend_scrape };
-// module.exports = { 'solend_data_bank' : this.solend_data_bank}
+module.exports = { 
+    'solend_scrape' : this.solend_scrape, 
+    'solend_data_bank' : this.solend_data_bank
+};
