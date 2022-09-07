@@ -13,13 +13,22 @@ const connection = mysql.createConnection({
     database: process.env.database
 });
 
+
+// test code
+const solend_sol = {
+    name : 'sol',
+    lending_protocol : 'solend',
+}
+
+
 connection.connect(err => {
     if (err) throw err;
     console.log('Database ' + `${process.env.database}` + ' connected.')
-    let sql = "INSERT INTO test1 (name) VALUES ('test2')";
-    connection.query(sql, (err, res) => {
-        if (err) throw err;
-        // fix this later as its hard coded
-        console.log('1 record inserted') 
+    connection.query({
+        sql : 'INSERT INTO test1 (name, lending_protocol) VALUES (?, ?)',
+        values : [solend_sol.name, solend_sol.lending_protocol]
+    }, (err, res) => {
+            if (err) throw err;
+            console.log('Solend data inserted!') 
     });
 });
