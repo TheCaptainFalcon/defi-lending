@@ -1,5 +1,11 @@
 const puppeteer = require('puppeteer');
 
+function delay(ms) {
+    return new Promise(res => {
+        setTimeout(res, ms)
+    });
+};
+
 (async function francium_scrape() {
     const browser =  await puppeteer.launch({ headless: true, defaultViewport: null })
     const page = (await browser.pages())[0]
@@ -7,6 +13,8 @@ const puppeteer = require('puppeteer');
     await page.goto('https://francium.io/app/lend', {waitUntil: 'domcontentloaded'});
     await page.waitForNetworkIdle();
     await page.waitForSelector('td.ant-table-cell>div>p');
+
+    delay(5000);
 
     console.log('Executing Francium scrape...')
     const millions = 1000000;
@@ -66,46 +74,17 @@ const puppeteer = require('puppeteer');
         day_of_week : dow
     }
 
-    // console.log(francium_sol);
-    // console.log(francium_usdc);
-    // console.log(francium_usdt);
-
     let francium_data_bank = [];
+    francium_data_bank.push(francium_sol, francium_usdc, francium_usdt);
+    console.log(francium_data_bank);
 
-    if (francium_sol_supply === 0) {
-        try {
-            setTimeout(3000);
-            console.log('Retrying Francium data scrape')
-            francium_sol_supply;
-            francium_sol_borrow;
-            francium_sol_supply_apy;
-            francium_sol_utilization;
-            francium_usdc_supply;
-            francium_usdc_borrow;
-            francium_usdc_supply_apy;
-            francium_usdc_utilization;
-            francium_usdt_supply;
-            francium_usdt_borrow;
-            francium_usdt_supply_apy;
-            francium_usdt_utilization;
-        
-        } catch {
-            // insert code to push to arr > db
-            francium_data_bank.push(francium_sol, francium_usdc, francium_usdt)
-            console.log(francium_data_bank)
-            console.log('Francium data scrape success!')
-        }
-    } else {
-        francium_data_bank.push(francium_sol, francium_usdc, francium_usdt)
-        console.log(francium_data_bank)
-        console.log('Finished Francium scraping!')
-    }
+    console.log('Finished Francium scraping!');
 
-    // francium_data_bank.push(francium_sol, francium_usdc, francium_usdt)
-    // console.log(francium_data_bank)
-    // console.log('Finished Francium scraping!')
     await browser.close()
 
 }());
 
-module.exports = { 'francium_scrape' : this.francium_scrape };
+module.exports = { 
+    'francium_scrape' : this.francium_scrape,
+    'francium_data_bank' : this.francium_data_bank 
+};

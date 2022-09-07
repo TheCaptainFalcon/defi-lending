@@ -1,5 +1,11 @@
 const puppeteer = require('puppeteer');
 
+function delay(ms) {
+    return new Promise(res => {
+        setTimeout(res, ms)
+    });
+};
+
 (async function tulip_scrape() {
     const browser =  await puppeteer.launch({ headless: true, defaultViewport: null })
     const page = (await browser.pages())[0]
@@ -14,6 +20,8 @@ const puppeteer = require('puppeteer');
     await page.goto('https://tulip.garden/lend', {waitUntil: 'domcontentloaded'});
     // await page.waitForNetworkIdle();
     await page.waitForSelector('div.lend-table__row-item__cell-usd')
+
+    delay(5000);
 
     console.log('Executing Tulip scrape...')
     // in order to account for edgecase, replacing built in substring method to an alternative.
@@ -85,46 +93,17 @@ const puppeteer = require('puppeteer');
         day_of_week : dow
     }
 
-
-    // console.log(tulip_sol)
-    // console.log(tulip_usdc)
-    // console.log(tulip_usdt)
-
     let tulip_data_bank = [];
-    // if my calculations are correct, when this triggers, the correct data will populate the instance that should have been without duplicating instances
-    if (tulip_sol_supply === 0) {
-        try {
-            setTimeout(3000);
-            console.log('Retrying Tulip data scrape')
-            tulip_sol_supply;
-            tulip_sol_borrow;
-            tulip_sol_supply_apy;
-            tulip_sol_utilization;
-            tulip_usdc_supply;
-            tulip_usdc_borrow;
-            tulip_usdc_supply_apy;
-            tulip_usdc_utilization;
-            tulip_usdt_supply;
-            tulip_usdt_borrow;
-            tulip_usdt_supply_apy;
-            tulip_usdt_utilization;
-        
-        } catch {
-            // insert code to push to arr > db
-            tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
-            console.log(tulip_data_bank)
-            console.log('tulip data scrape success!')
-        }
-    } else {
-        tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
-        console.log(tulip_data_bank)
-        console.log('Finished Tulip scrape!')
-    }
-    // tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
-    // console.log(tulip_data_bank)
-    // console.log('Finished Tulip scrape!')
+    tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
+    console.log(tulip_data_bank)
+
+    console.log('Finished Tulip scrape!')
+
     await browser.close();
 
 }());
 
-module.exports = { 'tulip_scrape' : this.tulip_scrape };
+module.exports = { 
+    'tulip_scrape' : this.tulip_scrape,
+    'tulip_data_bank' : this.tulip_data_bank 
+};

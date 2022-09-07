@@ -1,5 +1,11 @@
 const puppeteer = require('puppeteer');
 
+function delay(ms) {
+    return new Promise(res => {
+        setTimeout(res, ms)
+    });
+};
+
 (async function solend_scrape() {
     const browser =  await puppeteer.launch({ headless: true, defaultViewport: null })
     const page = (await browser.pages())[0]
@@ -8,6 +14,11 @@ const puppeteer = require('puppeteer');
 
     // usually xhr requests occur shortly after, this works compared to waiting for a selector.
     await page.waitForNetworkIdle()
+
+    // recalling the var to grab a new set of data does not work that way, even with a timeout.
+    // therefore if/else or iterative methods revolving around 0 values may not work as intended.
+    await delay(5000);
+
     console.log('Executing Solend scrape...')
 
     // data populates both name and price combined, substring removes the name and grabs the price without '$', trim removes the space at the end
@@ -85,46 +96,11 @@ const puppeteer = require('puppeteer');
         day_of_week : dow
     }
 
-    // console.log(solend_sol);
-    // console.log(solend_usdc);
-    // console.log(solend_usdt);
-
     let solend_data_bank = [];
+    solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
+    console.log(solend_data_bank)
 
-    if (solend_sol_supply === 0) {
-        try {
-            setTimeout(3000);
-            console.log('Retrying Solend data scrape')
-            solend_sol_supply;
-            solend_sol_borrow;
-            solend_sol_supply_apy;
-            // could manually add this later
-            // solend_sol_utilization;
-            solend_usdc_supply;
-            solend_usdc_borrow;
-            solend_usdc_supply_apy;
-            // solend_usdc_utilization;
-            solend_usdt_supply;
-            solend_usdt_borrow;
-            solend_usdt_supply_apy;
-            // francium_usdt_utilization;
-        
-        } catch {
-            // insert code to push to arr > db
-            solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
-            console.log(solend_data_bank);
-            console.log('Solend data scrape success!')
-        }
-    } else {
-        solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
-        console.log(solend_data_bank)
-        console.log('Finished Solend scraping!')
-    }
-
-    // solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
-    // console.log(solend_data_bank)
-
-    // console.log('Finished Solend scraping!')
+    console.log('Finished Solend scraping!')
     await browser.close()
 
 }());
