@@ -14,19 +14,11 @@ const connection = mysql.createConnection({
     database: process.env.database
 });
 
-// test code
-const solend_sol = {
-    name : 'sol',
-    lending_protocol : 'solend',
-}
+function load_solend_data() {
 
-
-
-function load_data() {
-
-    let sol = solend_data_bank[0];
-    let usdc = solend_data_bank[1];
-    let usdt = solend_data_bank[2];
+    const sol = solend_data_bank[0];
+    const usdc = solend_data_bank[1];
+    const usdt = solend_data_bank[2];
 
 
     connection.connect(err => {
@@ -55,6 +47,7 @@ function load_data() {
     });
 };
 
-load_data();
+// load_solend_data();
 
-module.exports = this.load_data;
+
+module.exports = { 'load_solend_data' : this.load_solend_data }

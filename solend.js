@@ -1,4 +1,13 @@
+require('dotenv').config({ path:'./secret.env' });
 const puppeteer = require('puppeteer');
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+    host: process.env.host,
+    user: process.env.user,
+    password: process.env.password,
+    database: process.env.database
+});
 
 function delay(ms) {
     return new Promise(res => {
@@ -100,10 +109,44 @@ function delay(ms) {
     solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
     console.log(solend_data_bank)
 
-    console.log('Finished Solend scraping!')
+    console.log('Finished Solend scraping!' + '\n')
+
+    // await Promise(load_solend_data);
+    // console.log('Added Solend data to db')
+
+    const sol = solend_data_bank[0];
+    const usdc = solend_data_bank[1];
+    const usdt = solend_data_bank[2];
+
+    connection.connect(err => {
+        if (err) throw err;
+        console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
+        connection.query({
+            sql : 'INSERT INTO test1 (name, lending_protocol, price) VALUES (?, ?, ?)',
+            values : [
+                sol.name, 
+                sol.lending_protocol, 
+                sol.price
+            ]
+        }, (err, res) => {
+                if (err) throw err;
+                console.log('Solend data inserted!')
+                console.log('Affected rows: ' + res.affectedRows); 
+        });
+    });
+
     await browser.close()
 
 }());
+
+// (async function solend_load() {
+//     const sol = solend_data_bank[0];
+// const usdc = solend_data_bank[1];
+// const usdt = solend_data_bank[2];
+//     console.log(solend_data_bank)
+//     await browser.close()
+// }());
+
 
 module.exports = { 
     'solend_scrape' : this.solend_scrape, 
