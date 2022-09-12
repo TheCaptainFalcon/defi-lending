@@ -53,7 +53,8 @@ function delay(ms) {
     const tulip_sol_utilization = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell')[53].textContent.replace('%', '').trimEnd()));
 
     const date_raw = new Date();
-    const date = date_raw.toLocaleDateString();
+    // const date = date_raw.toLocaleDateString();
+    const date = date_raw.toJSON.substring(0,10);
     const time = date_raw.toTimeString().substring(0,8)
     const dow = date_raw.toDateString().substring(0,3)
 

@@ -1,6 +1,9 @@
 require('dotenv').config({ path:'./secret.env' });
 const puppeteer = require('puppeteer');
 const mysql = require('mysql2');
+// const matching_date = require('./script');
+// const matching_time = require('./script');
+// const matching_dow = require('./script');
 
 const connection = mysql.createConnection({
     host: process.env.host,
@@ -27,7 +30,7 @@ function delay(ms) {
     // recalling the var to grab a new set of data does not work that way, even with a timeout.
     // therefore if/else or iterative methods revolving around 0 values may not work as intended.
     await delay(5000);
-
+    const millions = 1000000;
     console.log('Executing Solend scrape...')
 
     // data populates both name and price combined, substring removes the name and grabs the price without '$', trim removes the space at the end
@@ -46,7 +49,10 @@ function delay(ms) {
     // Date is associated as the same throughout to group instances into 1 per session of the scrape.
     // separating into multiple files creates new instances (may need to export same var instance)
     const date_raw = new Date();
-    const date = date_raw.toLocaleDateString();
+
+    // const date = date_raw.toLocaleDateString();
+    // need to be in this format for DATE sql format
+    const date = date_raw.toJSON().substring(0,10);
 
     // convert to 24 hr, bc am/pm makes data manipulating difficult
     const time = date_raw.toTimeString().substring(0,8)
@@ -68,11 +74,13 @@ function delay(ms) {
     const solend_usdt_borrow = await page.evaluate(() => parseInt(document.querySelectorAll('div.ant-col')[91].textContent.replaceAll(',' , '')))
     const solend_usdt_supply_apy = await page.evaluate(() => parseFloat(document.querySelectorAll('div.ant-col')[94].textContent))
 
+    // solend metrics
+    const solend_tvl = await page.evaluate(() => parseInt(document.querySelectorAll('div.ant-col')[24].textContent.substring(4).replace('M', ''))) * millions;
 
     const solend_sol = {
         name : 'sol',
         lending_protocol : 'solend',
-        price : solend_sol_price,
+        // price : solend_sol_price,
         total_supply : solend_sol_supply,
         total_borrow : solend_sol_borrow,
         supply_apy : solend_sol_supply_apy,
@@ -84,7 +92,7 @@ function delay(ms) {
     const solend_usdc = {
         name : 'usdc',
         lending_protocol : 'solend',
-        price : solend_usdc_price,
+        // price : solend_usdc_price,
         total_supply : solend_usdc_supply,
         total_borrow : solend_usdc_borrow,
         supply_apy : solend_usdc_supply_apy,
@@ -96,7 +104,7 @@ function delay(ms) {
     const solend_usdt = {
         name : 'usdt',
         lending_protocol : 'solend',
-        price : solend_usdt_price,
+        // price : solend_usdt_price,
         total_supply : solend_usdt_supply,
         total_borrow : solend_usdt_borrow,
         supply_apy : solend_usdt_supply_apy,
@@ -105,8 +113,15 @@ function delay(ms) {
         day_of_week : dow
     }
 
+    const solend_lp = {
+        tvl : solend_tvl,
+        date : date,
+        time : time,
+        day_of_week : dow
+    }
+
     let solend_data_bank = [];
-    solend_data_bank.push(solend_sol, solend_usdc, solend_usdt)
+    solend_data_bank.push(solend_sol, solend_usdc, solend_usdt, solend_lp)
     console.log(solend_data_bank)
 
     console.log('Finished Solend scraping!' + '\n')
@@ -117,36 +132,59 @@ function delay(ms) {
     const sol = solend_data_bank[0];
     const usdc = solend_data_bank[1];
     const usdt = solend_data_bank[2];
+    const solend = solend_data_bank[3];
 
+    // change this after testing is done
+    const insert_crypto_metrics = 'INSERT INTO cryptocurrency_metrics (cryptocurrency_id, total_supply, total_borrow, supply_apy, date, time, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const insert_crypto_price = 'INSERT INTO cryptocurrency_price (cryptocurrency_id, price) VALUES (?, ?)';
+    const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)'
+
+    // per setup, solend wil be id 1, tulip will be id 2, and francium will be id 3.
+
+
+    // Add in the associated tables and values and then delete this comment.
     connection.connect(err => {
         if (err) throw err;
         console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
         connection.query({
-            sql : 'INSERT INTO test1 (name, lending_protocol, price) VALUES (?, ?, ?)',
+            sql : insert_crypto_metrics,
             values : [
                 sol.name, 
                 sol.lending_protocol, 
-                sol.price
+                // change price to apply to the crypto price table not the metrics
+                // sol.price
+            ],
+            sql : insert_crypto_metrics,
+            values : [
+                usdc.name,
+                usdc.lending_protocol,
+                // usdc.price
+            ],
+            sql : insert_crypto_metrics,
+            values: [
+                usdt.name,
+                usdt.lending_protocol,
+                // usdt.price
+            ],
+            // change this to appropriate table and assign var to it (after testing is done)
+            sql : insert_crypto_metrics,
+            values: [
+                solend.tvl,
+                solend.date,
+                solend.time,
+                solend.dow
             ]
-        }, (err, res) => {
+
+        }, (err) => {
                 if (err) throw err;
                 console.log('Solend data inserted!')
-                console.log('Affected rows: ' + res.affectedRows); 
+                console.log('Affected Rows: ' + connection.query.length)
         });
     });
 
     await browser.close()
 
 }());
-
-// (async function solend_load() {
-//     const sol = solend_data_bank[0];
-// const usdc = solend_data_bank[1];
-// const usdt = solend_data_bank[2];
-//     console.log(solend_data_bank)
-//     await browser.close()
-// }());
-
 
 module.exports = { 
     'solend_scrape' : this.solend_scrape, 

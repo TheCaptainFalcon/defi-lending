@@ -34,7 +34,8 @@ function delay(ms) {
     const francium_sol_utilization = await page.evaluate(() => parseFloat(document.querySelectorAll('td.ant-table-cell')[18].textContent.replace('%', '')));
 
     const date_raw = new Date();
-    const date = date_raw.toLocaleDateString();
+    // const date = date_raw.toLocaleDateString();
+    const date = date_raw.toJSON.substring(0,10);
     const time = date_raw.toTimeString().substring(0,8)
     const dow = date_raw.toDateString().substring(0,3)
 
