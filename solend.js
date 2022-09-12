@@ -92,7 +92,7 @@ function delay(ms) {
     const solend_usdc = {
         name : 'usdc',
         lending_protocol : 'solend',
-        // price : solend_usdc_price,
+        price : solend_usdc_price,
         total_supply : solend_usdc_supply,
         total_borrow : solend_usdc_borrow,
         supply_apy : solend_usdc_supply_apy,
@@ -104,7 +104,7 @@ function delay(ms) {
     const solend_usdt = {
         name : 'usdt',
         lending_protocol : 'solend',
-        // price : solend_usdt_price,
+        price : solend_usdt_price,
         total_supply : solend_usdt_supply,
         total_borrow : solend_usdt_borrow,
         supply_apy : solend_usdt_supply_apy,
@@ -134,47 +134,101 @@ function delay(ms) {
     const usdt = solend_data_bank[2];
     const solend = solend_data_bank[3];
 
-    // change this after testing is done
     const insert_crypto_metrics = 'INSERT INTO cryptocurrency_metrics (cryptocurrency_id, total_supply, total_borrow, supply_apy, date, time, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const insert_crypto_price = 'INSERT INTO cryptocurrency_price (cryptocurrency_id, price) VALUES (?, ?)';
     const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)'
 
     // per setup, solend wil be id 1, tulip will be id 2, and francium will be id 3.
 
-
-    // Add in the associated tables and values and then delete this comment.
     connection.connect(err => {
         if (err) throw err;
         console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
         connection.query({
             sql : insert_crypto_metrics,
             values : [
-                sol.name, 
-                sol.lending_protocol, 
-                // change price to apply to the crypto price table not the metrics
-                // sol.price
+                1,
+                sol.total_supply,
+                sol.total_borrow,
+                sol.supply_apy,
+                sol.date,
+                sol.time,
+                sol.dow 
             ],
             sql : insert_crypto_metrics,
             values : [
-                usdc.name,
-                usdc.lending_protocol,
-                // usdc.price
+                2,
+                usdc.total_supply,
+                usdc.total_borrow,
+                usdc.supply_apy,
+                usdc.date,
+                usdc.time,
+                usdc.dow
             ],
             sql : insert_crypto_metrics,
             values: [
-                usdt.name,
-                usdt.lending_protocol,
-                // usdt.price
+                3,
+                usdt.total_supply,
+                usdt.total_borrow,
+                usdt.supply_apy,
+                usdt.date,
+                usdt.time,
+                usdt.dow
             ],
-            // change this to appropriate table and assign var to it (after testing is done)
-            sql : insert_crypto_metrics,
+            sql : insert_crypto_price,
+            values : [
+                1,
+                sol.price
+            ],
+            sql : insert_crypto_price,
+            values : [
+                2,
+                usdc.price
+            ],
+            sql : insert_crypto_price,
+            values : [
+                3,
+                usdt.price
+            ],
+            // at this point, yes its almost the borderline of anti-DRY. But there is no price field to grab for tulip or francium, so this is necessary to fill in to fit relational db.
+            // source of price is mostly the same.
+            sql : insert_crypto_price,
+            values : [
+                4,
+                sol.price
+            ],
+            sql : insert_crypto_price,
+            values : [
+                5,
+                usdc.price
+            ],
+            sql : insert_crypto_price,
+            values : [
+                6,
+                usdt.price
+            ],
+            sql : insert_crypto_price,
+            values : [
+                7,
+                sol.price
+            ],
+            sql : insert_crypto_price,
+            values : [
+                8,
+                usdc.price
+            ],
+            sql : insert_crypto_price,
+            values : [
+                9,
+                usdt.price
+            ],
+            sql : insert_lending_protocol_metrics,
             values: [
+                1,
                 solend.tvl,
                 solend.date,
                 solend.time,
                 solend.dow
             ]
-
         }, (err) => {
                 if (err) throw err;
                 console.log('Solend data inserted!')

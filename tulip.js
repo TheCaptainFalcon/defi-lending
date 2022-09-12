@@ -52,6 +52,9 @@ function delay(ms) {
     const tulip_sol_borrow = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell-usd')[7].textContent.substring(1).replace('M', ''))) * millions;
     const tulip_sol_utilization = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell')[53].textContent.replace('%', '').trimEnd()));
 
+    // tulip metrics
+    const tulip_tvl = await page.evaluate(() => parseFloat(document.querySelectorAll('.labelled-value__value')[1].textContent.replace('M' , ''))) * millions;
+
     const date_raw = new Date();
     // const date = date_raw.toLocaleDateString();
     const date = date_raw.toJSON.substring(0,10);
@@ -94,11 +97,77 @@ function delay(ms) {
         day_of_week : dow
     }
 
+    const tulip_lp = {
+        tvl : tulip_tvl,
+        date : date,
+        time : time,
+        day_of_week : dow
+    }
+
     let tulip_data_bank = [];
-    tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt)
+    tulip_data_bank.push(tulip_sol, tulip_usdc, tulip_usdt, tulip_lp)
     console.log(tulip_data_bank)
 
     console.log('Finished Tulip scrape!')
+
+    const sol = tulip_data_bank[0];
+    const usdc = tulip_data_bank[1];
+    const usdt = tulip_data_bank[2];
+    const tulip = tulip_data_bank[3];
+
+    const insert_crypto_metrics = 'INSERT INTO cryptocurrency_metrics (cryptocurrency_id, total_supply, total_borrow, supply_apy, date, time, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)';
+
+    // per setup, solend wil be id 1, tulip will be id 2, and francium will be id 3.
+
+    connection.connect(err => {
+        if (err) throw err;
+        console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
+        connection.query({
+            sql : insert_crypto_metrics,
+            values : [
+                4,
+                sol.total_supply,
+                sol.total_borrow,
+                sol.supply_apy,
+                sol.date,
+                sol.time,
+                sol.dow 
+            ],
+            sql : insert_crypto_metrics,
+            values : [
+                5,
+                usdc.total_supply,
+                usdc.total_borrow,
+                usdc.supply_apy,
+                usdc.date,
+                usdc.time,
+                usdc.dow
+            ],
+            sql : insert_crypto_metrics,
+            values: [
+                6,
+                usdt.total_supply,
+                usdt.total_borrow,
+                usdt.supply_apy,
+                usdt.date,
+                usdt.time,
+                usdt.dow
+            ],
+            sql : insert_lending_protocol_metrics,
+            values: [
+                2,
+                tulip.tvl,
+                tulip.date,
+                tulip.time,
+                tulip.dow
+            ]
+        }, (err) => {
+                if (err) throw err;
+                console.log('Solend data inserted!')
+                console.log('Affected Rows: ' + connection.query.length)
+        });
+    });
 
     await browser.close();
 

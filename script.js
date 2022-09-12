@@ -1,7 +1,5 @@
 const solend_scrape = require('./solend');
-
 const tulip_scrape = require('./tulip');
-
 const francium_scrape = require('./francium');
 
 const multi_scrape = [

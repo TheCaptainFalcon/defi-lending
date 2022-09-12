@@ -33,6 +33,15 @@ function delay(ms) {
     const francium_sol_borrow = await page.evaluate(() => parseFloat(document.querySelectorAll('td.ant-table-cell>div>p')[14].textContent.substring(1).replace('M' , ''))) * millions;
     const francium_sol_utilization = await page.evaluate(() => parseFloat(document.querySelectorAll('td.ant-table-cell')[18].textContent.replace('%', '')));
 
+    // new page bc tvl is on a different part of site
+    await page.goto('https://francium.io/app/invest/farm', {waitUntil: 'domcontentloaded'});
+    await page.waitForNetworkIdle();
+    await page.waitForSelector('b.hint');
+    delay(5000);
+
+    // francium metrics
+    const francium_tvl = await page.evaluate(() => parseInt(document.querySelectorAll('b.hint')[3].substring(1).replaceAll(',' , '')))
+
     const date_raw = new Date();
     // const date = date_raw.toLocaleDateString();
     const date = date_raw.toJSON.substring(0,10);
@@ -75,12 +84,78 @@ function delay(ms) {
         day_of_week : dow
     }
 
+    const francium_lp = {
+        // fill this above and dl
+        tvl : francium_tvl,
+        date : date,
+        time : time,
+        day_of_week : dow
+    }
+
     let francium_data_bank = [];
-    francium_data_bank.push(francium_sol, francium_usdc, francium_usdt);
+    francium_data_bank.push(francium_sol, francium_usdc, francium_usdt, francium_lp);
     console.log(francium_data_bank);
 
     console.log('Finished Francium scraping!');
 
+    const sol = francium_data_bank[0];
+    const usdc = francium_data_bank[1];
+    const usdt = francium_data_bank[2];
+    const francium = solend_data_bank[3];
+
+    const insert_crypto_metrics = 'INSERT INTO cryptocurrency_metrics (cryptocurrency_id, total_supply, total_borrow, supply_apy, date, time, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)';
+
+    // per setup, solend wil be id 1, tulip will be id 2, and francium will be id 3.
+
+    connection.connect(err => {
+        if (err) throw err;
+        console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
+        connection.query({
+            sql : insert_crypto_metrics,
+            values : [
+                7,
+                sol.total_supply,
+                sol.total_borrow,
+                sol.supply_apy,
+                sol.date,
+                sol.time,
+                sol.dow 
+            ],
+            sql : insert_crypto_metrics,
+            values : [
+                8,
+                usdc.total_supply,
+                usdc.total_borrow,
+                usdc.supply_apy,
+                usdc.date,
+                usdc.time,
+                usdc.dow
+            ],
+            sql : insert_crypto_metrics,
+            values: [
+                9,
+                usdt.total_supply,
+                usdt.total_borrow,
+                usdt.supply_apy,
+                usdt.date,
+                usdt.time,
+                usdt.dow
+            ],
+            sql : insert_lending_protocol_metrics,
+            values: [
+                3,
+                francium.tvl,
+                francium.date,
+                francium.time,
+                francium.dow
+            ]
+        }, (err) => {
+                if (err) throw err;
+                console.log('Solend data inserted!')
+                console.log('Affected Rows: ' + connection.query.length)
+        });
+    });
     await browser.close()
 
 }());
