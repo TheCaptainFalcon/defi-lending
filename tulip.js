@@ -1,10 +1,19 @@
+require('dotenv').config({ path:'./secret.env' });
 const puppeteer = require('puppeteer');
+const mysql = require('mysql2');
 
 function delay(ms) {
     return new Promise(res => {
         setTimeout(res, ms)
     });
 };
+
+const connection = mysql.createConnection({
+    host: process.env.host,
+    user: process.env.user,
+    password: process.env.password,
+    database: process.env.database
+});
 
 (async function tulip_scrape() {
     const browser =  await puppeteer.launch({ headless: true, defaultViewport: null })
@@ -18,10 +27,10 @@ function delay(ms) {
     await page.setViewport({ width: 1920, height: 1080})
 
     await page.goto('https://tulip.garden/lend', {waitUntil: 'domcontentloaded'});
-    // await page.waitForNetworkIdle();
+    await page.waitForNetworkIdle();
     await page.waitForSelector('div.lend-table__row-item__cell-usd')
 
-    delay(5000);
+    await delay(5000);
 
     console.log('Executing Tulip scrape...')
     // in order to account for edgecase, replacing built in substring method to an alternative.
@@ -32,9 +41,10 @@ function delay(ms) {
     const tulip_usdc_supply_apy = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell')[2].textContent.replace('%' , '')));
 
     // could use the same class in apy above, but there are too many extra variables that can upset the built in substring method.
-    const tulip_usdc_supply = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell-usd')[0].textContent.substring(1).replace('M' , ''))) * millions;
-
-    const tulip_usdc_borrow = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell-usd')[1].textContent.substring(1).replace('M', ''))) * millions;
+    const tulip_usdc_supply_raw = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell-usd')[0].textContent.substring(1).replace('M' , ''))) * millions;
+    const tulip_usdc_supply = parseInt(tulip_usdc_supply_raw);
+    const tulip_usdc_borrow_raw = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell-usd')[1].textContent.substring(1).replace('M', ''))) * millions;
+    const tulip_usdc_borrow = parseInt(tulip_usdc_borrow_raw);
     const tulip_usdc_utilization = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell')[5].textContent.replace('%', '').trimEnd()));
 
     // tulip usdt
@@ -53,11 +63,14 @@ function delay(ms) {
     const tulip_sol_utilization = await page.evaluate(() => parseFloat(document.querySelectorAll('div.lend-table__row-item__cell')[53].textContent.replace('%', '').trimEnd()));
 
     // tulip metrics
-    const tulip_tvl = await page.evaluate(() => parseFloat(document.querySelectorAll('.labelled-value__value')[1].textContent.replace('M' , ''))) * millions;
+    // millions doesnt get recognized outside function, therefore added the numerical valuation
+    // number is originally in a float with 2 decimals, multiply the number then convert back to int, as to not dismiss the other numbers.
+    const tulip_tvl_raw = await page.evaluate(() => parseFloat(document.querySelectorAll('div.labelled-value__value')[1].textContent.replace('M' , ''))) * millions;
+    const tulip_tvl = parseInt(tulip_tvl_raw);
 
     const date_raw = new Date();
     // const date = date_raw.toLocaleDateString();
-    const date = date_raw.toJSON.substring(0,10);
+    const date = date_raw.toJSON().substring(0,10);
     const time = date_raw.toTimeString().substring(0,8)
     const dow = date_raw.toDateString().substring(0,3)
 
@@ -67,7 +80,7 @@ function delay(ms) {
         total_supply : tulip_sol_supply,
         total_borrow : tulip_sol_borrow,
         supply_apy : tulip_sol_supply_apy,
-        utilization : tulip_sol_utilization,
+        // utilization : tulip_sol_utilization,
         date : date,
         time : time,
         day_of_week : dow
@@ -79,7 +92,7 @@ function delay(ms) {
         total_supply : tulip_usdc_supply,
         total_borrow : tulip_usdc_borrow,
         supply_apy : tulip_usdc_supply_apy,
-        utilization : tulip_usdc_utilization,
+        // utilization : tulip_usdc_utilization,
         date : date,
         time : time,
         day_of_week : dow
@@ -91,7 +104,7 @@ function delay(ms) {
         total_supply : tulip_usdt_supply,
         total_borrow : tulip_usdt_borrow,
         supply_apy : tulip_usdt_supply_apy,
-        utilization : tulip_usdt_utilization,
+        // utilization : tulip_usdt_utilization,
         date : date,
         time : time,
         day_of_week : dow
@@ -132,7 +145,7 @@ function delay(ms) {
                 sol.supply_apy,
                 sol.date,
                 sol.time,
-                sol.dow 
+                sol.day_of_week
             ],
             sql : insert_crypto_metrics,
             values : [
@@ -142,7 +155,7 @@ function delay(ms) {
                 usdc.supply_apy,
                 usdc.date,
                 usdc.time,
-                usdc.dow
+                usdc.day_of_week
             ],
             sql : insert_crypto_metrics,
             values: [
@@ -152,7 +165,7 @@ function delay(ms) {
                 usdt.supply_apy,
                 usdt.date,
                 usdt.time,
-                usdt.dow
+                usdt.day_of_week
             ],
             sql : insert_lending_protocol_metrics,
             values: [
@@ -160,11 +173,11 @@ function delay(ms) {
                 tulip.tvl,
                 tulip.date,
                 tulip.time,
-                tulip.dow
+                tulip.day_of_week
             ]
         }, (err) => {
                 if (err) throw err;
-                console.log('Solend data inserted!')
+                console.log('Tulip data inserted!')
                 console.log('Affected Rows: ' + connection.query.length)
         });
     });

@@ -76,6 +76,7 @@ function delay(ms) {
 
     // solend metrics
     const solend_tvl = await page.evaluate(() => parseInt(document.querySelectorAll('div.ant-col')[24].textContent.substring(4).replace('M', ''))) * millions;
+    
 
     const solend_sol = {
         name : 'sol',
@@ -136,7 +137,7 @@ function delay(ms) {
 
     const insert_crypto_metrics = 'INSERT INTO cryptocurrency_metrics (cryptocurrency_id, total_supply, total_borrow, supply_apy, date, time, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const insert_crypto_price = 'INSERT INTO cryptocurrency_price (cryptocurrency_id, price) VALUES (?, ?)';
-    const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)'
+    const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)';
 
     // per setup, solend wil be id 1, tulip will be id 2, and francium will be id 3.
 
@@ -152,7 +153,7 @@ function delay(ms) {
                 sol.supply_apy,
                 sol.date,
                 sol.time,
-                sol.dow 
+                sol.day_of_week
             ],
             sql : insert_crypto_metrics,
             values : [
@@ -162,7 +163,7 @@ function delay(ms) {
                 usdc.supply_apy,
                 usdc.date,
                 usdc.time,
-                usdc.dow
+                usdc.day_of_week
             ],
             sql : insert_crypto_metrics,
             values: [
@@ -172,7 +173,7 @@ function delay(ms) {
                 usdt.supply_apy,
                 usdt.date,
                 usdt.time,
-                usdt.dow
+                usdt.day_of_week
             ],
             sql : insert_crypto_price,
             values : [
@@ -227,7 +228,7 @@ function delay(ms) {
                 solend.tvl,
                 solend.date,
                 solend.time,
-                solend.dow
+                solend.day_of_week
             ]
         }, (err) => {
                 if (err) throw err;

@@ -1,10 +1,19 @@
+require('dotenv').config({ path:'./secret.env' });
 const puppeteer = require('puppeteer');
+const mysql = require('mysql2');
 
 function delay(ms) {
     return new Promise(res => {
         setTimeout(res, ms)
     });
 };
+
+const connection = mysql.createConnection({
+    host: process.env.host,
+    user: process.env.user,
+    password: process.env.password,
+    database: process.env.database
+});
 
 (async function francium_scrape() {
     const browser =  await puppeteer.launch({ headless: true, defaultViewport: null })
@@ -14,7 +23,7 @@ function delay(ms) {
     await page.waitForNetworkIdle();
     await page.waitForSelector('td.ant-table-cell>div>p');
 
-    delay(5000);
+    await delay(5000);
 
     console.log('Executing Francium scrape...')
     const millions = 1000000;
@@ -35,16 +44,16 @@ function delay(ms) {
 
     // new page bc tvl is on a different part of site
     await page.goto('https://francium.io/app/invest/farm', {waitUntil: 'domcontentloaded'});
-    await page.waitForNetworkIdle();
-    await page.waitForSelector('b.hint');
-    delay(5000);
+    // await page.waitForNetworkIdle();
+    // await page.waitForSelector('b.hint');
+    await delay(5000);
 
     // francium metrics
-    const francium_tvl = await page.evaluate(() => parseInt(document.querySelectorAll('b.hint')[3].substring(1).replaceAll(',' , '')))
+    const francium_tvl = await page.evaluate(() => parseInt(document.querySelectorAll('b.hint')[3].textContent.substring(1).replaceAll(',' , '')))
 
     const date_raw = new Date();
     // const date = date_raw.toLocaleDateString();
-    const date = date_raw.toJSON.substring(0,10);
+    const date = date_raw.toJSON().substring(0,10);
     const time = date_raw.toTimeString().substring(0,8)
     const dow = date_raw.toDateString().substring(0,3)
 
@@ -101,7 +110,7 @@ function delay(ms) {
     const sol = francium_data_bank[0];
     const usdc = francium_data_bank[1];
     const usdt = francium_data_bank[2];
-    const francium = solend_data_bank[3];
+    const francium = francium_data_bank[3];
 
     const insert_crypto_metrics = 'INSERT INTO cryptocurrency_metrics (cryptocurrency_id, total_supply, total_borrow, supply_apy, date, time, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)';
@@ -120,7 +129,7 @@ function delay(ms) {
                 sol.supply_apy,
                 sol.date,
                 sol.time,
-                sol.dow 
+                sol.day_of_week
             ],
             sql : insert_crypto_metrics,
             values : [
@@ -130,7 +139,7 @@ function delay(ms) {
                 usdc.supply_apy,
                 usdc.date,
                 usdc.time,
-                usdc.dow
+                usdc.day_of_week
             ],
             sql : insert_crypto_metrics,
             values: [
@@ -140,7 +149,7 @@ function delay(ms) {
                 usdt.supply_apy,
                 usdt.date,
                 usdt.time,
-                usdt.dow
+                usdt.day_of_week
             ],
             sql : insert_lending_protocol_metrics,
             values: [
@@ -148,11 +157,11 @@ function delay(ms) {
                 francium.tvl,
                 francium.date,
                 francium.time,
-                francium.dow
+                francium.day_of_week
             ]
         }, (err) => {
                 if (err) throw err;
-                console.log('Solend data inserted!')
+                console.log('Francium data inserted!')
                 console.log('Affected Rows: ' + connection.query.length)
         });
     });
