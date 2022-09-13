@@ -162,7 +162,7 @@ const connection = mysql.createConnection({
         }, (err) => {
                 if (err) throw err;
                 console.log('Francium data inserted!')
-                console.log('Affected Rows: ' + connection.query.length)
+                // console.log('Affected Rows: ' + connection.query.length)
         });
     });
     await browser.close()

@@ -178,7 +178,7 @@ const connection = mysql.createConnection({
         }, (err) => {
                 if (err) throw err;
                 console.log('Tulip data inserted!')
-                console.log('Affected Rows: ' + connection.query.length)
+                // console.log('Affected Rows: ' + connection.query.length)
         });
     });
 
