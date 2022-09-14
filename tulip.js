@@ -133,54 +133,76 @@ const connection = mysql.createConnection({
 
     // per setup, solend wil be id 1, tulip will be id 2, and francium will be id 3.
 
+    const sol_values = [
+        4,
+        sol.total_supply,
+        sol.total_borrow,
+        sol.supply_apy,
+        sol.date,
+        sol.time,
+        sol.day_of_week
+    ]
+
+    const usdc_values = [
+        5,
+        usdc.total_supply,
+        usdc.total_borrow,
+        usdc.supply_apy,
+        usdc.date,
+        usdc.time,
+        usdc.day_of_week
+    ]
+
+    const usdt_values = [
+        6,
+        usdt.total_supply,
+        usdt.total_borrow,
+        usdt.supply_apy,
+        usdt.date,
+        usdt.time,
+        usdt.day_of_week
+    ]
+
+    const tulip_lp_values = [
+        2,
+        tulip.tvl,
+        tulip.date,
+        tulip.time,
+        tulip.day_of_week
+    ]
+
     connection.connect(err => {
         if (err) throw err;
-        console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
+        // console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
         connection.query({
             sql : insert_crypto_metrics,
-            values : [
-                4,
-                sol.total_supply,
-                sol.total_borrow,
-                sol.supply_apy,
-                sol.date,
-                sol.time,
-                sol.day_of_week
-            ],
-            sql : insert_crypto_metrics,
-            values : [
-                5,
-                usdc.total_supply,
-                usdc.total_borrow,
-                usdc.supply_apy,
-                usdc.date,
-                usdc.time,
-                usdc.day_of_week
-            ],
-            sql : insert_crypto_metrics,
-            values: [
-                6,
-                usdt.total_supply,
-                usdt.total_borrow,
-                usdt.supply_apy,
-                usdt.date,
-                usdt.time,
-                usdt.day_of_week
-            ],
-            sql : insert_lending_protocol_metrics,
-            values: [
-                2,
-                tulip.tvl,
-                tulip.date,
-                tulip.time,
-                tulip.day_of_week
-            ]
-        }, (err) => {
-                if (err) throw err;
-                console.log('Tulip data inserted!')
-                // console.log('Affected Rows: ' + connection.query.length)
+            values : sol_values
         });
+
+        connection.query({
+            sql : insert_crypto_metrics,
+            values : usdc_values
+        });
+
+        connection.query({
+            sql : insert_crypto_metrics,
+            values : usdt_values
+        });
+
+        connection.query({
+            sql : insert_lending_protocol_metrics,
+            values : tulip_lp_values
+        })
+        
+        
+    }, (err) => {
+        if (err) throw err;
+        console.log('Tulip data inserted!')
+        // console.log('Affected Rows: ' + connection.query.length)
+        connection.end();
+        console.log('Tulip connection closed')
     });
+
 
     await browser.close();
 

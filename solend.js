@@ -1,10 +1,6 @@
 require('dotenv').config({ path:'./secret.env' });
 const puppeteer = require('puppeteer');
 const mysql = require('mysql2');
-const { connect } = require('http2');
-// const matching_date = require('./script');
-// const matching_time = require('./script');
-// const matching_dow = require('./script');
 
 const connection = mysql.createConnection({
     host: process.env.host,
@@ -128,9 +124,6 @@ function delay(ms) {
     console.log(solend_data_bank)
 
     console.log('Finished Solend scraping!' + '\n')
-
-    // await Promise(load_solend_data);
-    // console.log('Added Solend data to db')
 
     const sol = solend_data_bank[0];
     const usdc = solend_data_bank[1];
@@ -293,122 +286,12 @@ function delay(ms) {
             values : solend_lp_values
         })
     
-
-        // connection.query({
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         [
-        //             1,
-        //             sol.price
-        //         ],[
-        //             2,
-        //             usdc.price
-        //         ],[
-        //             3,
-        //             usdt.price
-        //         ],[
-        //             4,
-        //             sol.price
-        //         ],[
-        //             5,
-        //             usdc.price
-        //         ],[
-        //             6,
-        //             usdt.price
-        //         ],[
-        //             7,
-        //             sol.price
-        //         ],[
-        //             8,
-        //             usdc.price
-        //         ],[
-        //             9,
-        //             usdt.price
-        //         ]
-        //     ]
-        // });
-
-        // connection.query({
-        //     sql : insert_lending_protocol_metrics,
-        //     values : [
-        //         [
-        //             1,
-        //             solend.tvl,
-        //             solend.date,
-        //             solend.time,
-        //             solend.day_of_week
-        //         ]
-        //     ]
-        }, (err) => {
-            if (err) throw err;
-            console.log('Solend data inserted!')
-            connection.end();
-            console.log('Solend connection closed.')
-        });
-
-        
-
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         1,
-        //         sol.price
-        //     ],
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         2,
-        //         usdc.price
-        //     ],
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         3,
-        //         usdt.price
-        //     ],
-        //     // at this point, yes its almost the borderline of anti-DRY. But there is no price field to grab for tulip or francium, so this is necessary to fill in to fit relational db.
-        //     // source of price is mostly the same.
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         4,
-        //         sol.price
-        //     ],
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         5,
-        //         usdc.price
-        //     ],
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         6,
-        //         usdt.price
-        //     ],
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         7,
-        //         sol.price
-        //     ],
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         8,
-        //         usdc.price
-        //     ],
-        //     sql : insert_crypto_price,
-        //     values : [
-        //         9,
-        //         usdt.price
-        //     ],
-        //     sql : insert_lending_protocol_metrics,
-        //     values: [
-        //         1,
-        //         solend.tvl,
-        //         solend.date,
-        //         solend.time,
-        //         solend.day_of_week
-        //     ]
-        // }, (err) => {
-        //         if (err) throw err;
-        //         console.log('Solend data inserted!')
-        //         // console.log('Affected Rows: ' + connection.query.length)
-        // });
-    // });
+    }, (err) => {
+        if (err) throw err;
+        console.log('Solend data inserted!')
+        connection.end();
+        console.log('Solend connection closed.')
+    });
 
     await browser.close()
 

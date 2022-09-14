@@ -94,7 +94,6 @@ const connection = mysql.createConnection({
     }
 
     const francium_lp = {
-        // fill this above and dl
         tvl : francium_tvl,
         date : date,
         time : time,
@@ -117,54 +116,75 @@ const connection = mysql.createConnection({
 
     // per setup, solend wil be id 1, tulip will be id 2, and francium will be id 3.
 
+    const sol_values = [
+        7,
+        sol.total_supply,
+        sol.total_borrow,
+        sol.supply_apy,
+        sol.date,
+        sol.time,
+        sol.day_of_week
+    ]
+
+    const usdc_values = [
+        8,
+        usdc.total_supply,
+        usdc.total_borrow,
+        usdc.supply_apy,
+        usdc.date,
+        usdc.time,
+        usdc.day_of_week
+    ]
+
+    const usdt_values = [
+        9,
+        usdt.total_supply,
+        usdt.total_borrow,
+        usdt.supply_apy,
+        usdt.date,
+        usdt.time,
+        usdt.day_of_week
+    ]
+
+    const francium_lp_values = [
+        3,
+        francium.tvl,
+        francium.date,
+        francium.time,
+        francium.day_of_week
+    ]
+    
+
     connection.connect(err => {
         if (err) throw err;
-        console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
+        // console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
         connection.query({
             sql : insert_crypto_metrics,
-            values : [
-                7,
-                sol.total_supply,
-                sol.total_borrow,
-                sol.supply_apy,
-                sol.date,
-                sol.time,
-                sol.day_of_week
-            ],
+            values : sol_values
+        });
+
+        connection.query({
             sql : insert_crypto_metrics,
-            values : [
-                8,
-                usdc.total_supply,
-                usdc.total_borrow,
-                usdc.supply_apy,
-                usdc.date,
-                usdc.time,
-                usdc.day_of_week
-            ],
+            values : usdc_values
+        });
+
+        connection.query({
             sql : insert_crypto_metrics,
-            values: [
-                9,
-                usdt.total_supply,
-                usdt.total_borrow,
-                usdt.supply_apy,
-                usdt.date,
-                usdt.time,
-                usdt.day_of_week
-            ],
+            values : usdt_values
+        })
+        
+        connection.query({
             sql : insert_lending_protocol_metrics,
-            values: [
-                3,
-                francium.tvl,
-                francium.date,
-                francium.time,
-                francium.day_of_week
-            ]
-        }, (err) => {
+            values : francium_lp_values
+        })
+        
+    }, (err) => {
                 if (err) throw err;
                 console.log('Francium data inserted!')
-                // console.log('Affected Rows: ' + connection.query.length)
-        });
+                connection.end();
+                console.log('Francium connection closed')
     });
+
     await browser.close()
 
 }());
