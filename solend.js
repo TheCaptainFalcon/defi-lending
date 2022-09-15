@@ -1,6 +1,7 @@
 require('dotenv').config({ path:'./secret.env' });
 const puppeteer = require('puppeteer');
 const mysql = require('mysql2');
+const nodeCron = require('node-cron');
 
 const connection = mysql.createConnection({
     host: process.env.host,
@@ -16,7 +17,7 @@ function delay(ms) {
     });
 };
 
-(async function solend_scrape() {
+async function solend_scrape() {
     const browser =  await puppeteer.launch({ headless: true, defaultViewport: null })
     const page = (await browser.pages())[0]
     await page.setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36");
@@ -29,7 +30,7 @@ function delay(ms) {
     // therefore if/else or iterative methods revolving around 0 values may not work as intended.
     await delay(5000);
     const millions = 1000000;
-    console.log('Executing Solend scrape...')
+    console.log('Executing Solend scrape...' + '\n')
 
     // data populates both name and price combined, substring removes the name and grabs the price without '$', trim removes the space at the end
     // all of this is converted into an integer
@@ -48,7 +49,6 @@ function delay(ms) {
     // separating into multiple files creates new instances (may need to export same var instance)
     const date_raw = new Date();
 
-    // const date = date_raw.toLocaleDateString();
     // need to be in this format for DATE sql format
     const date = date_raw.toJSON().substring(0,10);
 
@@ -121,7 +121,7 @@ function delay(ms) {
 
     let solend_data_bank = [];
     solend_data_bank.push(solend_sol, solend_usdc, solend_usdt, solend_lp)
-    console.log(solend_data_bank)
+    // console.log(solend_data_bank)
 
     console.log('Finished Solend scraping!' + '\n')
 
@@ -133,8 +133,6 @@ function delay(ms) {
     const insert_crypto_metrics = 'INSERT INTO cryptocurrency_metrics (cryptocurrency_id, total_supply, total_borrow, supply_apy, date, time, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const insert_crypto_price = 'INSERT INTO cryptocurrency_price (cryptocurrency_id, price) VALUES (?, ?)';
     const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)';
-
-    // per setup, solend wil be id 1, tulip will be id 2, and francium will be id 3.
 
     const sol_values = [
         1,
@@ -221,7 +219,6 @@ function delay(ms) {
 
     connection.connect(err => {
         if (err) throw err;
-        // console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
 
         // bulk inserts are not easily compatible. This is the easiest alternative.
         connection.query({
@@ -288,14 +285,19 @@ function delay(ms) {
     
     }, (err) => {
         if (err) throw err;
-        console.log('Solend data inserted!')
-        connection.end();
-        console.log('Solend connection closed.')
+        return
     });
 
     await browser.close()
 
-}());
+};
+
+solend_scrape();
+
+// default settings (3) automatically starts without callback
+// oddly enough adding a console log while also trying to callback within the function causes the whole function to not work.
+// async function to start automatically cannot be used for utilizing scheduler.
+const job = nodeCron.schedule("10 * * * * *", solend_scrape);
 
 module.exports = { 
     'solend_scrape' : this.solend_scrape, 

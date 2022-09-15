@@ -1,6 +1,7 @@
 require('dotenv').config({ path:'./secret.env' });
 const puppeteer = require('puppeteer');
 const mysql = require('mysql2');
+const nodeCron = require('node-cron');
 
 function delay(ms) {
     return new Promise(res => {
@@ -15,7 +16,7 @@ const connection = mysql.createConnection({
     database: process.env.database
 });
 
-(async function francium_scrape() {
+async function francium_scrape() {
     const browser =  await puppeteer.launch({ headless: true, defaultViewport: null })
     const page = (await browser.pages())[0]
     await page.setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36");
@@ -25,7 +26,7 @@ const connection = mysql.createConnection({
 
     await delay(5000);
 
-    console.log('Executing Francium scrape...')
+    console.log('Executing Francium scrape...' + '\n')
     const millions = 1000000;
     const francium_usdc_supply_apy = await page.evaluate(() => parseFloat(document.querySelectorAll('p.hint')[0].textContent.replace('%' , '')));
     const francium_usdc_supply = await page.evaluate(() => parseFloat(document.querySelectorAll('td.ant-table-cell>div>p')[2].textContent.substring(1).replace('M' , ''))) * millions;
@@ -44,15 +45,13 @@ const connection = mysql.createConnection({
 
     // new page bc tvl is on a different part of site
     await page.goto('https://francium.io/app/invest/farm', {waitUntil: 'domcontentloaded'});
-    // await page.waitForNetworkIdle();
-    // await page.waitForSelector('b.hint');
     await delay(5000);
 
     // francium metrics
     const francium_tvl = await page.evaluate(() => parseInt(document.querySelectorAll('b.hint')[3].textContent.substring(1).replaceAll(',' , '')))
 
     const date_raw = new Date();
-    // const date = date_raw.toLocaleDateString();
+
     const date = date_raw.toJSON().substring(0,10);
     const time = date_raw.toTimeString().substring(0,8)
     const dow = date_raw.toDateString().substring(0,3)
@@ -102,9 +101,9 @@ const connection = mysql.createConnection({
 
     let francium_data_bank = [];
     francium_data_bank.push(francium_sol, francium_usdc, francium_usdt, francium_lp);
-    console.log(francium_data_bank);
+    // console.log(francium_data_bank);
 
-    console.log('Finished Francium scraping!');
+    console.log('Finished Francium scraping!' + '\n');
 
     const sol = francium_data_bank[0];
     const usdc = francium_data_bank[1];
@@ -113,8 +112,6 @@ const connection = mysql.createConnection({
 
     const insert_crypto_metrics = 'INSERT INTO cryptocurrency_metrics (cryptocurrency_id, total_supply, total_borrow, supply_apy, date, time, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)';
-
-    // per setup, solend wil be id 1, tulip will be id 2, and francium will be id 3.
 
     const sol_values = [
         7,
@@ -157,7 +154,6 @@ const connection = mysql.createConnection({
 
     connection.connect(err => {
         if (err) throw err;
-        // console.log('Database ' + `${process.env.database}` + ' connected.' + '\n')
         connection.query({
             sql : insert_crypto_metrics,
             values : sol_values
@@ -179,15 +175,17 @@ const connection = mysql.createConnection({
         })
         
     }, (err) => {
-                if (err) throw err;
-                console.log('Francium data inserted!')
-                connection.end();
-                console.log('Francium connection closed')
+        if (err) throw err;
+        return;
     });
 
-    await browser.close()
+    await browser.close();
 
-}());
+};
+
+francium_scrape();
+const job = nodeCron.schedule("10 * * * * *", francium_scrape);
+
 
 module.exports = { 
     'francium_scrape' : this.francium_scrape,

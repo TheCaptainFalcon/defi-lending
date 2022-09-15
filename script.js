@@ -9,8 +9,7 @@ const multi_scrape = [
 ];
 
 async function process_parallel (multi_scrape) {
-    await Promise.all(multi_scrape);
-    return;
+    await Promise.allSettled(multi_scrape);
 };
 
 process_parallel(multi_scrape);
