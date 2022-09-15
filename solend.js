@@ -28,9 +28,9 @@ async function solend_scrape() {
 
     // recalling the var to grab a new set of data does not work that way, even with a timeout.
     // therefore if/else or iterative methods revolving around 0 values may not work as intended.
-    await delay(5000);
+    await delay(15000);
     const millions = 1000000;
-    console.log('Executing Solend scrape...' + '\n')
+    console.log('Starting Solend scrape at ' + new Date().toLocaleString() + '\n')
 
     // data populates both name and price combined, substring removes the name and grabs the price without '$', trim removes the space at the end
     // all of this is converted into an integer
@@ -297,7 +297,7 @@ solend_scrape();
 // default settings (3) automatically starts without callback
 // oddly enough adding a console log while also trying to callback within the function causes the whole function to not work.
 // async function to start automatically cannot be used for utilizing scheduler.
-const job = nodeCron.schedule("10 * * * * *", solend_scrape);
+nodeCron.schedule("*/15 * * * *", solend_scrape);
 
 module.exports = { 
     'solend_scrape' : this.solend_scrape, 

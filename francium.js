@@ -24,9 +24,9 @@ async function francium_scrape() {
     await page.waitForNetworkIdle();
     await page.waitForSelector('td.ant-table-cell>div>p');
 
-    await delay(5000);
+    await delay(8000);
 
-    console.log('Executing Francium scrape...' + '\n')
+    console.log('Starting Francium scrape at ' + new Date().toLocaleString() + '\n')
     const millions = 1000000;
     const francium_usdc_supply_apy = await page.evaluate(() => parseFloat(document.querySelectorAll('p.hint')[0].textContent.replace('%' , '')));
     const francium_usdc_supply = await page.evaluate(() => parseFloat(document.querySelectorAll('td.ant-table-cell>div>p')[2].textContent.substring(1).replace('M' , ''))) * millions;
@@ -45,7 +45,7 @@ async function francium_scrape() {
 
     // new page bc tvl is on a different part of site
     await page.goto('https://francium.io/app/invest/farm', {waitUntil: 'domcontentloaded'});
-    await delay(5000);
+    await delay(7000);
 
     // francium metrics
     const francium_tvl = await page.evaluate(() => parseInt(document.querySelectorAll('b.hint')[3].textContent.substring(1).replaceAll(',' , '')))
@@ -184,7 +184,7 @@ async function francium_scrape() {
 };
 
 francium_scrape();
-const job = nodeCron.schedule("10 * * * * *", francium_scrape);
+nodeCron.schedule("*/15 * * * *", francium_scrape);
 
 
 module.exports = { 

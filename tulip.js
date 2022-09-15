@@ -32,9 +32,9 @@ async function tulip_scrape() {
     await page.waitForSelector('div.lend-table__row-item__cell-usd')
 
     // for whatever reason, the tvl takes so long to load
-    await delay(10000);
+    await delay(15000);
 
-    console.log('Executing Tulip scrape...' + '\n')
+    console.log('Starting Tulip scrape at ' + new Date().toLocaleString() + '\n')
     // in order to account for edgecase, replacing built in substring method to an alternative.
     // using subtring 1 will eliminate the $ but can account for increasing digit counts
     // adding m in zeros to keep data consistent
@@ -203,7 +203,7 @@ async function tulip_scrape() {
 };
 
 tulip_scrape();
-const job = nodeCron.schedule("10 * * * * *", tulip_scrape);
+nodeCron.schedule("*/15 * * * *", tulip_scrape);
 
 module.exports = { 
     'tulip_scrape' : this.tulip_scrape,
