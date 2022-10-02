@@ -1,5 +1,10 @@
 # DeFi Lending Protocol
-[![Build Status](link to github repo)](link to github repo)
+![GitHub last commit](https://img.shields.io/github/last-commit/thecaptainfalcon/defi-lending)
+
+![Investor Dashboard](/images/p3_investor_dashboard.png "Investor Dashboard - DeFi Lending")
+
+[Interactive Tableau Dashboard](https://public.tableau.com/app/profile/joseph708/viz/P3Draft/InvestorDashboard) 
+
 ## What is this project?
 
 This project analyzes the comparison in yield potential when lending assets between different lending protocols and asset types within the Solana blockchain.
@@ -11,13 +16,13 @@ KPI metrics are focused on the 2 types: volatile and non-volatile (stablecoin), 
 The reason for this split is to provide a measure to the risk-on/risk-off assessment within the crypto environment
 
 ## Domain Key terms & definitions: 
-- LP: Sometimes referred to as the Liquidity Pool, but for this dashboard its short for the Lending Protocol.
-- TVL: Total Valued Locked. This is the total valuation of assets that are being lended as the supply. In the TradFi world, this is the same as the Assets Under Management (AUM).
-- Asset: This the blanket term used in this dashboard to refer to all coins, tokens, and stablecoins.
-- DeFi: Decentralized Finance.
-- Lending: When you provide liquidity in exchange for yield (This is different for each protocol or entity that provides this incentive).
-- Stablecoin: Tokens that are pegged to a collateralised currency, whether it be Fiat currency or an asset that retains its valuation regardless of time or market conditions (ie. gold, silver). 
-- Volatile APY: This refers to the APY for all NON-stablecoin assets. 
+- **LP:** Sometimes referred to as the Liquidity Pool, but for this dashboard its short for the Lending Protocol.
+- **TVL:** Total Valued Locked. This is the total valuation of assets that are being lended as the supply. In the TradFi world, this is the same as the Assets Under Management (AUM).
+- **Asset:** This the blanket term used in this dashboard to refer to all coins, tokens, and stablecoins.
+- **DeFi:** Decentralized Finance.
+- **Lending:** When you provide liquidity in exchange for yield (This is different for each protocol or entity that provides this incentive).
+- **Stablecoin:** Tokens that are pegged to a collateralised currency, whether it be Fiat currency or an asset that retains its valuation regardless of time or market conditions (ie. gold, silver). 
+- **Volatile APY:** This refers to the APY for all NON-stablecoin assets. 
 
 ## Tech Stack:
 
@@ -127,7 +132,7 @@ The second option is the full risk-off route and not lending any portion of your
 
 ## EER Diagram
 
-include ss of overview
+![MySQL EER Diagram](/images/p3_eer_diagram.jpeg "EER Diagram")
 
 ### Author notes:
 
