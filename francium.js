@@ -24,7 +24,7 @@ async function francium_scrape() {
     await page.waitForNetworkIdle();
     await page.waitForSelector('td.ant-table-cell>div>p');
 
-    await delay(8000);
+    await delay(30000);
 
     console.log('Starting Francium scrape at ' + new Date().toLocaleString() + '\n')
     const millions = 1000000;
@@ -45,10 +45,10 @@ async function francium_scrape() {
 
     // new page bc tvl is on a different part of site
     await page.goto('https://francium.io/app/invest/farm', {waitUntil: 'domcontentloaded'});
-    await delay(7000);
+    await delay(30000);
 
     // francium metrics
-    const francium_tvl = await page.evaluate(() => parseInt(document.querySelectorAll('b.hint')[3].textContent.substring(1).replaceAll(',' , '')))
+    const francium_tvl = await page.evaluate(() => parseInt(document.querySelectorAll('b.hint')[2].textContent.substring(1).replaceAll(',' , '')))
 
     const date_raw = new Date();
 
