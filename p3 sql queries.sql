@@ -61,4 +61,32 @@ SET GLOBAL sql_mode='';
 -- LINES TERMINATED BY '\r\n'
 -- IGNORE 1 LINES -- to accomodate column headers;
 
+DELIMITER //
+CREATE PROCEDURE apy_by_lp()
+BEGIN
+-- APY by LP
+SELECT 
+	lending_protocol.name, 
+    cryptocurrency_metrics.supply_apy 
+FROM lending_protocol_metrics
+INNER JOIN lending_protocol ON lending_protocol_metrics.lending_protocol_id = lending_protocol.lending_protocol_id
+INNER JOIN cryptocurrency ON lending_protocol.lending_protocol_id = cryptocurrency.lending_protocol_id
+INNER JOIN cryptocurrency_metrics ON cryptocurrency.cryptocurrency_id = cryptocurrency_metrics.cryptocurrency_id
+GROUP BY lending_protocol.name;
+END //
+DELIMITER ;
 
+CALL apy_by_lp;
+
+-- APY by Asset
+select cryptocurrency.name, cryptocurrency_metrics.supply_apy
+from cryptocurrency_metrics
+inner join cryptocurrency on cryptocurrency_metrics.cryptocurrency_id = cryptocurrency.cryptocurrency_id
+group by cryptocurrency.name;
+
+-- Supply/Borrow by LP
+select lending_protocol.name, cryptocurrency_metrics.total_supply, cryptocurrency_metrics.total_borrow
+from cryptocurrency_metrics
+inner join cryptocurrency on cryptocurrency_metrics.cryptocurrency_id = cryptocurrency.cryptocurrency_id
+inner join lending_protocol on cryptocurrency.lending_protocol_id = lending_protocol.lending_protocol_id
+group by lending_protocol.name
