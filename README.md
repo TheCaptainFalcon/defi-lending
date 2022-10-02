@@ -1,7 +1,7 @@
 # DeFi Lending Protocol
 ![GitHub last commit](https://img.shields.io/github/last-commit/thecaptainfalcon/defi-lending)
 
-![Investor Dashboard](/images/p3_investor_dashboard.png "Investor Dashboard - DeFi Lending")
+![Investor Dashboard](/images/md_images/p3_investor_dashboard.png "Investor Dashboard - DeFi Lending")
 
 [Interactive Tableau Dashboard](https://public.tableau.com/app/profile/joseph708/viz/P3Draft/InvestorDashboard) 
 
@@ -131,8 +131,7 @@ While there is the option of obtaining insurance for exploits or depegging, it w
 The second option is the full risk-off route and not lending any portion of your portfolio. This is a great option too, as it would provide a more liquid setup where one could capitalise on lower price averages on assets they may be bullish on.
 
 ## EER Diagram
-
-![MySQL EER Diagram](/images/p3_eer_diagram.jpeg "EER Diagram")
+![MySQL EER Diagram](/images/md_images/p3_eer_diagram.JPG "EER Diagram")
 
 ### Author notes:
 
