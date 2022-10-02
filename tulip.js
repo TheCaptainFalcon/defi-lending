@@ -32,7 +32,7 @@ async function tulip_scrape() {
     await page.waitForSelector('div.lend-table__row-item__cell-usd')
 
     // for whatever reason, the tvl takes so long to load
-    await delay(15000);
+    await delay(30000);
 
     console.log('Starting Tulip scrape at ' + new Date().toLocaleString() + '\n')
     // in order to account for edgecase, replacing built in substring method to an alternative.

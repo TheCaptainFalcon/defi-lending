@@ -1,0 +1,10 @@
+cryptocurrency_id,lending_protocol_id,name
+1,1,sol
+2,1,usdc
+3,1,usdt
+4,2,sol
+5,2,usdc
+6,2,usdt
+7,3,sol
+8,3,usdc
+9,3,usdt

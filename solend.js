@@ -28,7 +28,7 @@ async function solend_scrape() {
 
     // recalling the var to grab a new set of data does not work that way, even with a timeout.
     // therefore if/else or iterative methods revolving around 0 values may not work as intended.
-    await delay(15000);
+    await delay(30000);
     const millions = 1000000;
     console.log('Starting Solend scrape at ' + new Date().toLocaleString() + '\n')
 
@@ -131,7 +131,7 @@ async function solend_scrape() {
     const solend = solend_data_bank[3];
 
     const insert_crypto_metrics = 'INSERT INTO cryptocurrency_metrics (cryptocurrency_id, total_supply, total_borrow, supply_apy, date, time, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    const insert_crypto_price = 'INSERT INTO cryptocurrency_price (cryptocurrency_id, price) VALUES (?, ?)';
+    const insert_crypto_price = 'INSERT INTO cryptocurrency_price (cryptocurrency_id, price, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)';
     const insert_lending_protocol_metrics = 'INSERT INTO lending_protocol_metrics (lending_protocol_id, tvl, date, time, day_of_week) VALUES (?, ?, ?, ?, ?)';
 
     const sol_values = [
@@ -166,47 +166,74 @@ async function solend_scrape() {
 
     const solend_sol_prices = [
         1,
-        sol.price
+        sol.price,
+        sol.date,
+        sol.time,
+        sol.day_of_week
     ]
 
     const solend_usdc_prices = [
         2,
-        usdc.price
+        usdc.price,
+        usdc.date,
+        usdc.time,
+        usdc.day_of_week
     ]
 
     const solend_usdt_prices = [
         3,
-        usdt.price
+        usdt.price,
+        usdt.date,
+        usdt.time,
+        usdt.day_of_week
     ]
 
     const tulip_sol_prices = [
         4,
-        sol.price
+        sol.price,
+        sol.date,
+        sol.time,
+        sol.day_of_week
     ]
 
     const tulip_usdc_prices = [
         5,
-        usdc.price
+        usdc.price,
+        usdc.date,
+        usdc.time,
+        usdc.day_of_week
     ]
 
     const tulip_usdt_prices = [
         6,
-        usdt.price
+        usdt.price,
+        usdt.date,
+        usdt.time,
+        usdt.day_of_week
     ]
 
     const francium_sol_prices = [
         7,
-        sol.price
+        sol.price,
+        sol.date,
+        sol.time,
+        sol.day_of_week
     ]
 
     const francium_usdc_prices = [
         8,
-        usdc.price
+        usdc.price,
+        usdc.date,
+        usdc.time,
+        usdc.day_of_week
     ]
 
     const francium_usdt_prices = [
         9,
-        usdt.price
+        usdt.price,
+        usdt.date,
+        usdt.time,
+        usdt.day_of_week
     ]
         
     const solend_lp_values = [
