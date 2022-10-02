@@ -131,7 +131,26 @@ While there is the option of obtaining insurance for exploits or depegging, it w
 The second option is the full risk-off route and not lending any portion of your portfolio. This is a great option too, as it would provide a more liquid setup where one could capitalise on lower price averages on assets they may be bullish on.
 
 ## EER Diagram
-![MySQL EER Diagram](/images/md_images/p3_eer_diagram.JPG "EER Diagram")
+![MySQL EER Diagram](/images/md_images/sql/p3_eer_diagram.JPG "EER Diagram")
+
+## SQL Stored Procedure - Samples/Examples
+
+### APY by LP
+![sql stored procedure - apy by lp](/images/md_images/sql/sql_stored_procedure-apy_by_lp.JPG "apy by lp")
+
+![sql call - apy by lp](/images/md_images/sql/call-apy_by_lp.JPG "apy by lp")
+
+
+### APY by Asset
+![sql stored procedure - apy by asset](/images/md_images/sql/sql_stored_procedure-apy_by_asset.JPG "apy by asset")
+
+![sql call - apy by asset](/images/md_images/sql/call-apy_by_asset.JPG "apy by asset")
+
+
+### Supply/Borrow by LP
+![sql stored procedure - supply/borrow by lp](/images/md_images/sql/sql_stored_procedure-supply_borrow_by_lp.JPG "supply/borrow by lp")
+
+![sql call - supply/borrow by lp](/images/md_images/sql/call-supply_borrow_by_lp.JPG "supply/borrow by lp")
 
 ### Author notes:
 
