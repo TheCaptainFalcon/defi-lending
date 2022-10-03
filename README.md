@@ -1,11 +1,29 @@
 # DeFi Lending Protocol
 ![GitHub last commit](https://img.shields.io/github/last-commit/thecaptainfalcon/defi-lending)
 
-![Investor Dashboard](/images/md_images/p3_investor_dashboard.png "Investor Dashboard - DeFi Lending")
-
 [Interactive Tableau Dashboard](https://public.tableau.com/app/profile/joseph708/viz/P3Draft/InvestorDashboard) 
 
-## What is this project?
+![Investor Dashboard](/images/md_images/p3_investor_dashboard.png "Investor Dashboard - DeFi Lending")
+
+## Table of Contents
+1. [What is this project?](#proj-id)
+2. [Domain Key Terms & Definition](#dom-id)
+3. [Tech Stack](#tech-id)
+4. [What is the extent of this project?](#purpose-id)
+5. [Who is the end user and what do they care about the most?](#enduser-id)
+6. [How are the chosen KPIs determined and why are they important?](#kpi-id)
+7. [Where did the data come from?](#data-id)
+8. [Challenges faced during the project?](#challenge-id)
+9. [How do you use the dashboard?](#instruction-id)
+10. [What other data would help to make this existing dataset more effective in drawing conclusions?](#moredata-id)
+11. [What actions do you recommend for end users based on the data?](#recommend-id)
+12. [EER Diagram](#eer-id)
+13. [SQL Stored Procedure - Samples/Examples](#sql-id)
+14. [Author notes](#author-id)
+
+<div id='proj-id'/>
+
+## What is this Project?
 
 This project analyzes the comparison in yield potential when lending assets between different lending protocols and asset types within the Solana blockchain.
 
@@ -15,7 +33,9 @@ KPI metrics are focused on the 2 types: volatile and non-volatile (stablecoin), 
 
 The reason for this split is to provide a measure to the risk-on/risk-off assessment within the crypto environment
 
-## Domain Key terms & definitions: 
+<div id='dom-id'/>
+
+## Domain Key Terms & Definitions: 
 - **LP:** Sometimes referred to as the Liquidity Pool, but for this dashboard its short for the Lending Protocol.
 - **TVL:** Total Valued Locked. This is the total valuation of assets that are being lended as the supply. In the TradFi world, this is the same as the Assets Under Management (AUM).
 - **Asset:** This the blanket term used in this dashboard to refer to all coins, tokens, and stablecoins.
@@ -23,6 +43,8 @@ The reason for this split is to provide a measure to the risk-on/risk-off assess
 - **Lending:** When you provide liquidity in exchange for yield (This is different for each protocol or entity that provides this incentive).
 - **Stablecoin:** Tokens that are pegged to a collateralised currency, whether it be Fiat currency or an asset that retains its valuation regardless of time or market conditions (ie. gold, silver). 
 - **Volatile APY:** This refers to the APY for all NON-stablecoin assets. 
+
+<div id='tech-id'/>
 
 ## Tech Stack:
 
@@ -36,6 +58,8 @@ Data Analyst/Viz:
 - Tableau
 - MySQL
 
+<div id='purpose-id'/>
+
 ## What is the extent of this project?
 
 While there are numerous protocols or Dapps focused on yield aggregation or lending, this project only focuses on the 3 most popular DeFi lending platforms within the Solana blockchain.
@@ -44,11 +68,15 @@ This also means that the assets in question are based on the cross-chain trading
 
 In addition to this, the yield portion only applies to the lending APY and has no implications on the borrowing aspects or leveraged farm methods within the protocols.
 
+<div id='enduser-id'/>
+
 ## Who is the end user and what do they care about the most?
 
 Investors active within the crypto space, especialy those that are more inclined to have a risk-off mentality and want to capitalize on small gains without huge capital fluctuations and risk associated with more volatile assets.
 
 Investors care about yield and reduction in any unnecessary risk; by converting risky assets into liquid stablecoins, they can choose to sit and wait for ideal market conditions or utilize minimal risk to return for small gains.
+
+<div id='kpi-id'/>
 
 ## How are the chosen KPIs determined and why are they important?
 
@@ -59,6 +87,8 @@ Volatile APY refers to the assets that face more direct risk exposure and experi
 Stablecoin APY refers to the tokens known as stablecoins that are pegged to a 1:1 collateralized Fiat currency or value retaining asset. These tokens function as the liquid assets that face no direct risk exposure (only third party exploits if lending), and represents a position in which investors are wanting to off-load most of the risk, while waiting for ideal market conditions.
 
 The LP TVL represents the average of the lending supply between all the lending protocols. These metrics help to identify possible third-party exploits (massive decrease in TVL levels), surplus/shortage of lending supply, which can affect the rates of borrowing rates (not applicable to this project, though), and the underlying trend of the lending market. 
+
+<div id='data-id'/>
 
 ## Where did the data come from?
 
@@ -74,6 +104,8 @@ After the data was scraped, it would then be pushed to a localhost MySQL databas
 Connecting Tableau from here would have been ideal, however Tableau Public has numerous limitations on data connection sources/extracts, therefore an extra step of exporting a CSV file of each table was required.
 
 At this point, the data could only be updated through this manual step, but if a different data viz software or a higher plan version of Tableau was used, the concept of dynamic data would still remain.
+
+<div id ='challenge-id'/>
 
 ## Challenges faced during the project?
 
@@ -99,6 +131,8 @@ Price needed to only be grabbed once, but because we were using a relational dat
 
 This resulted in having to obtain the same data for price numerous times to affix with each LP table.
 
+<div id='instruction-id'/>
+
 ## How do you use the dashboard?
 
 The top 2 charts where the average APY is filtered by the LP and by the asset type, each data point can be clicked to filter and affect other charts within the dashboard.
@@ -109,14 +143,17 @@ Note: the KPI metrics serve to show the overall average and do not reflect chang
 
 The arrangement of the charts were built with the mindset of an investor trying to figure out the overall yield aspect of lending and then filtering by the largest broad filter to the most specific. The time series data helps to provide the short term trend of possible yield within the LP and assets while also bring able to see the relationship of the uptrend or downtrend based on price fluctations (for volatile assets).
 
+<div id='moredata-id'/>
 
-What other data would help to make this existing dataset more effective in drawing conclusions?
+## What other data would help to make this existing dataset more effective in drawing conclusions?
 
 Longer dataset timelines, shorter time intervals in which the script is run.
 
 In addition, more asset pairs both in the volatile and stablecoin types would provide more sensible yield averages in the KPI metrics, as well as the other customisable options in the dashboard.
 
 However, all of these extra features would require extensive data infrastructure implications that would best be suited for a high performance server with a dedicated data storage and standalone script that isn't affected by latency or ram/processing issues.
+
+<div id='recommend-id'/>
 
 ## What actions do you recommend for end users based on the data?
 
@@ -130,8 +167,12 @@ While there is the option of obtaining insurance for exploits or depegging, it w
 
 The second option is the full risk-off route and not lending any portion of your portfolio. This is a great option too, as it would provide a more liquid setup where one could capitalise on lower price averages on assets they may be bullish on.
 
+<div id='eer-id'/>
+
 ## EER Diagram
 ![MySQL EER Diagram](/images/md_images/sql/p3_eer_diagram.JPG "EER Diagram")
+
+<div id='sql-id'/>
 
 ## SQL Stored Procedure - Samples/Examples
 
@@ -151,6 +192,8 @@ The second option is the full risk-off route and not lending any portion of your
 ![sql stored procedure - supply/borrow by lp](/images/md_images/sql/sql_stored_procedure-supply_borrow_by_lp.JPG "supply/borrow by lp")
 
 ![sql call - supply/borrow by lp](/images/md_images/sql/call-supply_borrow_by_lp.JPG "supply/borrow by lp")
+
+<div id='author-id'/>
 
 ### Author notes:
 
